@@ -37,7 +37,7 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
         overHead.add(newGameButton, BorderLayout.WEST);
         overHead.add(movesLabel, BorderLayout.EAST);
         overHead.setBorder(new EmptyBorder(50, 50, 10, 50));
-        overHead.setBackground(new Color(34,37,101));
+        overHead.setBackground(new Color(34, 37, 101));
 
         grid.setBackground(new Color(34, 37, 101));
         grid.setLayout(new GridLayout(4, 4));
@@ -46,12 +46,12 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
 
         movesLabel.setForeground(Color.WHITE);
         movesLabel.setFont(new Font("Street Cred", Font.PLAIN, 20));
-        movesLabel.setBackground(new Color(235,204,37));
+        movesLabel.setBackground(new Color(235, 204, 37));
 
         newGameButton.setPreferredSize(new Dimension(100, 50));
         newGameButton.setFont(new Font("Street Cred", Font.PLAIN, 13));
         newGameButton.addActionListener(this);
-        newGameButton.setBackground(new Color(34,37,101));
+        newGameButton.setBackground(new Color(34, 37, 101));
         newGameButton.setForeground(Color.WHITE);
         newGameButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
@@ -85,7 +85,9 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
             }
         }
 
-        shuffle();
+        do {
+            shuffle();
+        } while (!isSolvable());
         try {
             setIconImage(ImageIO.read(new File("icon.png")));
         } catch (IOException e) {
@@ -100,6 +102,26 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
         setVisible(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
+    }
+
+    public boolean isSolvable() {
+        int inv_counter = 0;
+        int[] values = new int[16];
+        // Lägger alla komponenters nummer i en int array
+        for (int i = 0; i < grid.getComponents().length; i++) {
+            Tile temp = (Tile) grid.getComponents()[i];
+            values[i] = temp.getIndexValue();
+        }
+
+        for (int i = 0; i < values.length - 1; i++) {
+            for (int j = i + 1; j < values.length; j++) {
+                if (values[i] < values[j]) {
+                    inv_counter++;
+                }
+            }
+        }
+
+        return inv_counter % 2 == 0;
     }
 
     public boolean isSwappable(JButton button) {
@@ -223,8 +245,10 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
     }
 
     public void newGame() {
-        shuffle();
-        reset();
+        do {
+            shuffle();
+            reset();
+        } while (!isSolvable());
     }
 
     @Override
@@ -242,9 +266,8 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
         if (isSolved()) {
             JOptionPane.showMessageDialog(null, "YOU BEAT THE GAME!");
             newGame();
-        }
-        else if (movesCounter == 0 ) {
-            JOptionPane .showMessageDialog(null, "YOU LOSE!");
+        } else if (movesCounter == 0) {
+            JOptionPane.showMessageDialog(null, "YOU LOSE!");
             newGame();
         }
     }
