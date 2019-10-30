@@ -112,12 +112,31 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
         return false;
     }
 
+    public void swap(JButton source) {
+        Tile tempTile = tiles[sourceRow][sourceCol];
+        tiles[sourceRow][sourceCol] = tiles[blankRow][blankCol];
+        tiles[blankRow][blankCol] = tempTile;
+        grid.remove(tile0);
+        grid.remove(source);
+
+        if (emptyIndex < sourceIndex) {
+            grid.add(source, emptyIndex);
+            grid.add(tile0, sourceIndex);
+        } else if (emptyIndex > sourceIndex) {
+            grid.add(tile0, sourceIndex);
+            grid.add(source, emptyIndex);
+        }
+        revalidate();
+        repaint();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
 
         JButton source = (JButton) e.getSource();
 
         if (isSwappable(source)) {
+            swap(source);
         }
     }
 }
