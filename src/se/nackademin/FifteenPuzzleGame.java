@@ -11,8 +11,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Random;
 
-
 public class FifteenPuzzleGame extends JFrame implements ActionListener {
+
+    final ImageIcon gameOverIcon = new ImageIcon("gameover.gif");
+    final ImageIcon gameWonIcon = new ImageIcon("gamewon.gif");
 
     private JPanel overHead = new JPanel();
     private JPanel gridTable = new JPanel();
@@ -107,6 +109,7 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
     }
 
     public boolean isGameSolvable() {
+
         int inv_counter = 0;
         int[] values = new int[16];
         // Lägger alla komponenters nummer i en int array
@@ -127,7 +130,6 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
     }
 
     public boolean areTilesSwappable(JButton button) {
-
         // för att hitta platsen på knappen man trycker och även den blanka platsen
         for (int row = 0; row < tiles.length; row++) {
             for (int col = 0; col < tiles.length; col++) {
@@ -163,6 +165,7 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
 
     // Byter plats på knappar
     public void swapTiles(JButton source) {
+
         Tile tempTile = tiles[sourceRow][sourceCol];
         tiles[sourceRow][sourceCol] = tiles[blankRow][blankCol];
         tiles[blankRow][blankCol] = tempTile;
@@ -181,6 +184,7 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
     }
 
     public void shuffleTiles() {
+
         Random random = new Random();
 
         //randomize positions for 2D array buttons
@@ -237,16 +241,19 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
     }
 
     public void updateMovesCounter() {
+
         movesCounter--;
         movesLabel.setText("<html>Moves LEFT<br><html>" + "------ " + movesCounter + " ------");
     }
 
     public void resetMovesCounter() {
+
         movesCounter = 250;
         movesLabel.setText("<html>Moves LEFT<br><html>" + "------ " + movesCounter + " ------");
     }
 
     public void newGame() {
+
         do {
             shuffleTiles();
             resetMovesCounter();
@@ -254,19 +261,16 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
     }
 
     private void gameOverPlayMusic() {
-        try
-        {
+
+        try {
             File file = new File("gameover.wav");
             AudioInputStream inputStream = AudioSystem.getAudioInputStream(file);
             AudioFormat format = inputStream.getFormat();
             DataLine.Info info = new DataLine.Info(Clip.class, format);
-            Clip clip = (Clip)AudioSystem.getLine(info);
+            Clip clip = (Clip) AudioSystem.getLine(info);
             clip.open(inputStream);
             clip.start();
-        }
-
-        catch (IOException | LineUnavailableException | UnsupportedAudioFileException e)
-        {
+        } catch (IOException | LineUnavailableException | UnsupportedAudioFileException e) {
             JOptionPane.showMessageDialog(null, "ERROR: Ett fel uppstod med musiken!");
         }
     }
@@ -276,8 +280,38 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
         gameOverPlayMusic();
 
         Object[] options = {"TRY AGAIN", "QUIT"};
-        int inputOption = JOptionPane.showOptionDialog(null, "GAME OVER", "PUZZLE GAME",
-                JOptionPane.YES_OPTION, JOptionPane.CANCEL_OPTION, null, options, options[1]);
+        int inputOption = JOptionPane.showOptionDialog(null, "", "PUZZLE GAME",
+                JOptionPane.YES_OPTION, JOptionPane.CANCEL_OPTION, gameOverIcon, options, options[1]);
+
+        if (inputOption == 0) {
+            newGame();
+        } else {
+            System.exit(0);
+        }
+    }
+
+    private void gameWonPlayMusic() {
+
+        try {
+            File file = new File("gamewon.wav");
+            AudioInputStream inputStream = AudioSystem.getAudioInputStream(file);
+            AudioFormat format = inputStream.getFormat();
+            DataLine.Info info = new DataLine.Info(Clip.class, format);
+            Clip clip = (Clip) AudioSystem.getLine(info);
+            clip.open(inputStream);
+            clip.start();
+        } catch (IOException | LineUnavailableException | UnsupportedAudioFileException e) {
+            JOptionPane.showMessageDialog(null, "ERROR: Ett fel uppstod med musiken!");
+        }
+    }
+
+    public void gameWonScreen() {
+
+        gameWonPlayMusic();
+
+        Object[] options = {"PLAY AGAIN", "QUIT"};
+        int inputOption = JOptionPane.showOptionDialog(null, "",
+                "PUZZLE GAME", JOptionPane.YES_OPTION, JOptionPane.CANCEL_OPTION, gameWonIcon, options, options[1]);
 
         if (inputOption == 0) {
             newGame();
@@ -299,8 +333,7 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
         }
 
         if (isGameCompleted()) {
-            JOptionPane.showMessageDialog(null, "YOU BEAT THE GAME!", "PUZZLE GAME", JOptionPane.INFORMATION_MESSAGE);
-            newGame();
+            gameWonScreen();
         } else if (movesCounter == 0) {
             gameOverScreen();
         }
