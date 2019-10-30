@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Random;
 
+
 public class FifteenPuzzleGame extends JFrame implements ActionListener {
 
     private JPanel overHead = new JPanel();
@@ -298,7 +299,7 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
         }
 
         if (isGameCompleted()) {
-            JOptionPane.showMessageDialog(null, "YOU BEAT THE GAME!");
+            JOptionPane.showMessageDialog(null, "YOU BEAT THE GAME!", "PUZZLE GAME", JOptionPane.INFORMATION_MESSAGE);
             newGame();
         } else if (movesCounter == 0) {
             gameOverScreen();
