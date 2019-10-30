@@ -118,7 +118,6 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
         JButton source = (JButton) e.getSource();
 
         if (isSwappable(source)) {
-
         }
     }
 }
