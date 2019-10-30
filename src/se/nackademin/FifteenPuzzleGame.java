@@ -13,15 +13,15 @@ import java.util.Random;
 
 public class FifteenPuzzleGame extends JFrame implements ActionListener {
 
-    private JPanel grid = new JPanel();
     private JPanel overHead = new JPanel();
+    private JPanel gridTable = new JPanel();
     private Tile[][] tiles = new Tile[4][4];
     private Tile tile0 = new Tile("");
     private JLabel movesLabel = new JLabel("Moves LEFT");
     private JButton newGameButton = new JButton(" New Game ");
 
-    private int emptyIndex;
     private int sourceIndex;
+    private int blankIndex;
     private int sourceRow;
     private int sourceCol;
     private int blankRow;
@@ -32,7 +32,7 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
 
         setLayout(new BorderLayout());
         add(overHead, BorderLayout.NORTH);
-        add(grid, BorderLayout.CENTER);
+        add(gridTable, BorderLayout.CENTER);
 
         overHead.setLayout(new BorderLayout());
         overHead.add(newGameButton, BorderLayout.WEST);
@@ -40,10 +40,10 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
         overHead.setBorder(new EmptyBorder(50, 50, 10, 50));
         overHead.setBackground(new Color(34, 37, 101));
 
-        grid.setBackground(new Color(34, 37, 101));
-        grid.setLayout(new GridLayout(4, 4));
-        grid.setBorder(new EmptyBorder(50, 50, 50, 50));
-        grid.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        gridTable.setBackground(new Color(34, 37, 101));
+        gridTable.setLayout(new GridLayout(4, 4));
+        gridTable.setBorder(new EmptyBorder(50, 50, 50, 50));
+        gridTable.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         movesLabel.setForeground(Color.WHITE);
         movesLabel.setFont(new Font("Street Cred", Font.PLAIN, 20));
@@ -70,13 +70,13 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
                 if (row == 3 && col == 3) {
                     tiles[row][col] = tile0;
                     tile0.setIndexValue(0);
-                    grid.add(tiles[row][col]);
+                    gridTable.add(tiles[row][col]);
                     tiles[row][col].setBackground(Color.WHITE);
                     tiles[row][col].setName("tile0");
                 } else {
                     tiles[row][col] = new Tile(i + "");
                     tiles[row][col].setIndexValue(i);
-                    grid.add(tiles[row][col]);
+                    gridTable.add(tiles[row][col]);
                     tiles[row][col].addActionListener(this);
                     tiles[row][col].setBackground(new Color(235, 204, 37));
                     tiles[row][col].setName("tile" + i);
@@ -87,8 +87,8 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
         }
 
         do {
-            shuffle();
-        } while (!isSolvable());
+            shuffleTiles();
+        } while (!isGameSolvable());
         try {
             setIconImage(ImageIO.read(new File("icon.png")));
         } catch (IOException e) {
@@ -98,19 +98,19 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
         movesLabel.setText("<html>Moves LEFT<br><html>" + "------ " + movesCounter + " ------");
         setTitle("PUZZLE GAME");
         setResizable(false);
-        setLocation(500, 200);
         setSize(600, 600);
         setVisible(true);
+        setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
     }
 
-    public boolean isSolvable() {
+    public boolean isGameSolvable() {
         int inv_counter = 0;
         int[] values = new int[16];
         // Lägger alla komponenters nummer i en int array
-        for (int i = 0; i < grid.getComponents().length; i++) {
-            Tile temp = (Tile) grid.getComponents()[i];
+        for (int i = 0; i < gridTable.getComponents().length; i++) {
+            Tile temp = (Tile) gridTable.getComponents()[i];
             values[i] = temp.getIndexValue();
         }
 
@@ -125,7 +125,7 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
         return inv_counter % 2 == 0;
     }
 
-    public boolean isSwappable(JButton button) {
+    public boolean areTilesSwappable(JButton button) {
 
         // för att hitta platsen på knappen man trycker och även den blanka platsen
         for (int row = 0; row < tiles.length; row++) {
@@ -140,7 +140,7 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
             }
         }
         sourceIndex = (sourceRow * 4) + sourceCol;
-        emptyIndex = (blankRow * 4) + blankCol;
+        blankIndex = (blankRow * 4) + blankCol;
         // om den är till höger
         if (sourceCol != 3 && sourceRow == blankRow && tiles[sourceRow][sourceCol + 1] == tile0) {
             return true;
@@ -161,25 +161,25 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
     }
 
     // Byter plats på knappar
-    public void swap(JButton source) {
+    public void swapTiles(JButton source) {
         Tile tempTile = tiles[sourceRow][sourceCol];
         tiles[sourceRow][sourceCol] = tiles[blankRow][blankCol];
         tiles[blankRow][blankCol] = tempTile;
-        grid.remove(tile0);
-        grid.remove(source);
+        gridTable.remove(tile0);
+        gridTable.remove(source);
 
-        if (emptyIndex < sourceIndex) {
-            grid.add(source, emptyIndex);
-            grid.add(tile0, sourceIndex);
-        } else if (emptyIndex > sourceIndex) {
-            grid.add(tile0, sourceIndex);
-            grid.add(source, emptyIndex);
+        if (blankIndex < sourceIndex) {
+            gridTable.add(source, blankIndex);
+            gridTable.add(tile0, sourceIndex);
+        } else if (blankIndex > sourceIndex) {
+            gridTable.add(tile0, sourceIndex);
+            gridTable.add(source, blankIndex);
         }
         revalidate();
         repaint();
     }
 
-    public void shuffle() {
+    public void shuffleTiles() {
         Random random = new Random();
 
         //randomize positions for 2D array buttons
@@ -194,19 +194,19 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
             }
         }
         //remove all components from panel
-        grid.removeAll();
+        gridTable.removeAll();
 
         // add components with randomized position to panel
         for (int row = 0; row < tiles.length; row++) {
             for (int col = 0; col < tiles.length; col++) {
-                grid.add(tiles[row][col]);
+                gridTable.add(tiles[row][col]);
             }
         }
         revalidate();
         repaint();
     }
 
-    public boolean isSolved() {
+    public boolean isGameCompleted() {
 
         int[] winPattern = {1, 2, 3, 4,
                 5, 6, 7, 8,
@@ -235,21 +235,21 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
         }
     }
 
-    public void moves() {
+    public void updateMovesCounter() {
         movesCounter--;
         movesLabel.setText("<html>Moves LEFT<br><html>" + "------ " + movesCounter + " ------");
     }
 
-    public void reset() {
+    public void resetMovesCounter() {
         movesCounter = 250;
         movesLabel.setText("<html>Moves LEFT<br><html>" + "------ " + movesCounter + " ------");
     }
 
     public void newGame() {
         do {
-            shuffle();
-            reset();
-        } while (!isSolvable());
+            shuffleTiles();
+            resetMovesCounter();
+        } while (!isGameSolvable());
     }
 
     private void gameOverPlayMusic() {
@@ -275,10 +275,10 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
         gameOverPlayMusic();
 
         Object[] options = {"TRY AGAIN", "QUIT"};
-        int test = JOptionPane.showOptionDialog(null, "GAME OVER", "PUZZLE GAME",
+        int inputOption = JOptionPane.showOptionDialog(null, "GAME OVER", "PUZZLE GAME",
                 JOptionPane.YES_OPTION, JOptionPane.CANCEL_OPTION, null, options, options[1]);
 
-        if (test == 0) {
+        if (inputOption == 0) {
             newGame();
         } else {
             System.exit(0);
@@ -292,12 +292,12 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
 
         if (source == newGameButton) {
             newGame();
-        } else if (isSwappable(source)) {
-            swap(source);
-            moves();
+        } else if (areTilesSwappable(source)) {
+            swapTiles(source);
+            updateMovesCounter();
         }
 
-        if (isSolved()) {
+        if (isGameCompleted()) {
             JOptionPane.showMessageDialog(null, "YOU BEAT THE GAME!");
             newGame();
         } else if (movesCounter == 0) {
