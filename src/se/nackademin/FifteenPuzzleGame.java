@@ -30,7 +30,7 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
                     GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("street cred.ttf")));
         } catch (IOException | FontFormatException e) {
-            //Handle exception
+            JOptionPane.showMessageDialog(null, "Filen hittade ej.");
         }
 
         int i = 1;
