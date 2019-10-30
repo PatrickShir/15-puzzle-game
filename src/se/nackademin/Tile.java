@@ -4,7 +4,7 @@ import javax.swing.*;
 
 public class Tile extends JButton {
 
-    private int indexValue = 0;
+    private int indexValue;
 
     public int getIndexValue() {
         return indexValue;
