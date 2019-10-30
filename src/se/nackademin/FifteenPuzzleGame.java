@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
 
 public class FifteenPuzzleGame extends JFrame implements ActionListener {
 
@@ -126,6 +127,33 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
         } else if (emptyIndex > sourceIndex) {
             grid.add(tile0, sourceIndex);
             grid.add(source, emptyIndex);
+        }
+        revalidate();
+        repaint();
+    }
+
+    public void shuffle() {
+        Random random = new Random();
+
+        //randomize positions for 2D array buttons
+        for (int row = 0; row < tiles.length; row++) {
+            for (int col = 0; col < tiles.length; col++) {
+                int randomNumber = random.nextInt(16);
+                int randomRow = randomNumber / 4;
+                int randomCol = randomNumber % 4;
+                Tile temp = tiles[row][col];
+                tiles[row][col] = tiles[randomRow][randomCol];
+                tiles[randomRow][randomCol] = temp;
+            }
+        }
+        //remove all components from panel
+        grid.removeAll();
+
+        // add components with randomized position to panel
+        for (int row = 0; row < tiles.length; row++) {
+            for (int col = 0; col < tiles.length; col++) {
+                grid.add(tiles[row][col]);
+            }
         }
         revalidate();
         repaint();
