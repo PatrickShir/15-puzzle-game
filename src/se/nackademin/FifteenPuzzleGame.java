@@ -13,10 +13,10 @@ import java.util.Random;
 public class FifteenPuzzleGame extends JFrame implements ActionListener {
 
     private JPanel grid = new JPanel();
+    private JPanel overHead = new JPanel();
     private Tile[][] tiles = new Tile[4][4];
     private Tile tile0 = new Tile("");
-
-    private JPanel overHead = new JPanel();
+    private JLabel movesLabel = new JLabel("Moves LEFT");
     private JButton newGameButton = new JButton(" New Game ");
 
     private int emptyIndex;
@@ -25,6 +25,7 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
     private int sourceCol;
     private int blankRow;
     private int blankCol;
+    private int movesCounter = 250;
 
     public FifteenPuzzleGame() {
 
@@ -34,6 +35,7 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
 
         overHead.setLayout(new BorderLayout());
         overHead.add(newGameButton, BorderLayout.WEST);
+        overHead.add(movesLabel, BorderLayout.EAST);
         overHead.setBorder(new EmptyBorder(50, 50, 10, 50));
         overHead.setBackground(new Color(34,37,101));
 
@@ -41,6 +43,10 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
         grid.setLayout(new GridLayout(4, 4));
         grid.setBorder(new EmptyBorder(50, 50, 50, 50));
         grid.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        movesLabel.setForeground(Color.WHITE);
+        movesLabel.setFont(new Font("Street Cred", Font.PLAIN, 20));
+        movesLabel.setBackground(new Color(235,204,37));
 
         newGameButton.setPreferredSize(new Dimension(100, 50));
         newGameButton.setFont(new Font("Street Cred", Font.PLAIN, 13));
@@ -86,6 +92,7 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
             e.printStackTrace();
         }
 
+        movesLabel.setText("<html>Moves LEFT<br><html>" + "------ " + movesCounter + " ------");
         setTitle("PUZZLE GAME");
         setResizable(false);
         setLocation(500, 200);
@@ -205,8 +212,19 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
         }
     }
 
+    public void moves() {
+        movesCounter--;
+        movesLabel.setText("<html>Moves LEFT<br><html>" + "------ " + movesCounter + " ------");
+    }
+
+    public void reset() {
+        movesCounter = 250;
+        movesLabel.setText("<html>Moves LEFT<br><html>" + "------ " + movesCounter + " ------");
+    }
+
     public void newGame() {
         shuffle();
+        reset();
     }
 
     @Override
@@ -218,6 +236,16 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
             newGame();
         } else if (isSwappable(source)) {
             swap(source);
+            moves();
+        }
+
+        if (isSolved()) {
+            JOptionPane.showMessageDialog(null, "YOU BEAT THE GAME!");
+            newGame();
+        }
+        else if (movesCounter == 0 ) {
+            JOptionPane .showMessageDialog(null, "YOU LOSE!");
+            newGame();
         }
     }
 }
