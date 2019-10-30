@@ -16,6 +16,9 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
     private Tile[][] tiles = new Tile[4][4];
     private Tile tile0 = new Tile("");
 
+    private JPanel overHead = new JPanel();
+    private JButton newGameButton = new JButton(" New Game ");
+
     private int emptyIndex;
     private int sourceIndex;
     private int sourceRow;
@@ -26,12 +29,25 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
     public FifteenPuzzleGame() {
 
         setLayout(new BorderLayout());
+        add(overHead, BorderLayout.NORTH);
         add(grid, BorderLayout.CENTER);
+
+        overHead.setLayout(new BorderLayout());
+        overHead.add(newGameButton, BorderLayout.WEST);
+        overHead.setBorder(new EmptyBorder(50, 50, 10, 50));
+        overHead.setBackground(new Color(34,37,101));
 
         grid.setBackground(new Color(34, 37, 101));
         grid.setLayout(new GridLayout(4, 4));
         grid.setBorder(new EmptyBorder(50, 50, 50, 50));
         grid.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        newGameButton.setPreferredSize(new Dimension(100, 50));
+        newGameButton.setFont(new Font("Street Cred", Font.PLAIN, 13));
+        newGameButton.addActionListener(this);
+        newGameButton.setBackground(new Color(34,37,101));
+        newGameButton.setForeground(Color.WHITE);
+        newGameButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         try {
             GraphicsEnvironment ge =
@@ -63,6 +79,7 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
             }
         }
 
+        shuffle();
         try {
             setIconImage(ImageIO.read(new File("icon.png")));
         } catch (IOException e) {
@@ -174,7 +191,7 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
         int i = 0;
         for (int row = 0; row < tiles.length; row++) {
             for (int col = 0; col < tiles.length; col++) {
-                if (tiles[row][col].getIndexValue() == winPattern[i] ||tiles[row][col].getIndexValue() == winPatternAlt[i]) {
+                if (tiles[row][col].getIndexValue() == winPattern[i] || tiles[row][col].getIndexValue() == winPatternAlt[i]) {
                     counter++;
                     i++;
                 }
@@ -188,12 +205,18 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
         }
     }
 
+    public void newGame() {
+        shuffle();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
 
         JButton source = (JButton) e.getSource();
 
-        if (isSwappable(source)) {
+        if (source == newGameButton) {
+            newGame();
+        } else if (isSwappable(source)) {
             swap(source);
         }
     }
