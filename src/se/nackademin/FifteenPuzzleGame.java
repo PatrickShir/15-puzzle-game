@@ -112,6 +112,7 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
         return false;
     }
 
+    // Byter plats på knappar
     public void swap(JButton source) {
         Tile tempTile = tiles[sourceRow][sourceCol];
         tiles[sourceRow][sourceCol] = tiles[blankRow][blankCol];
