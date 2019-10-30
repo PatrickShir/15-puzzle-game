@@ -1,6 +1,7 @@
 package se.nackademin;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -251,6 +252,39 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
         } while (!isSolvable());
     }
 
+    private void gameOverPlayMusic() {
+        try
+        {
+            File file = new File("gameover.wav");
+            AudioInputStream inputStream = AudioSystem.getAudioInputStream(file);
+            AudioFormat format = inputStream.getFormat();
+            DataLine.Info info = new DataLine.Info(Clip.class, format);
+            Clip clip = (Clip)AudioSystem.getLine(info);
+            clip.open(inputStream);
+            clip.start();
+        }
+
+        catch (IOException | LineUnavailableException | UnsupportedAudioFileException e)
+        {
+            JOptionPane.showMessageDialog(null, "ERROR: Ett fel uppstod med musiken!");
+        }
+    }
+
+    public void gameOverScreen() {
+
+        gameOverPlayMusic();
+
+        Object[] options = {"TRY AGAIN", "QUIT"};
+        int test = JOptionPane.showOptionDialog(null, "GAME OVER", "PUZZLE GAME",
+                JOptionPane.YES_OPTION, JOptionPane.CANCEL_OPTION, null, options, options[1]);
+
+        if (test == 0) {
+            newGame();
+        } else {
+            System.exit(0);
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
 
@@ -267,8 +301,7 @@ public class FifteenPuzzleGame extends JFrame implements ActionListener {
             JOptionPane.showMessageDialog(null, "YOU BEAT THE GAME!");
             newGame();
         } else if (movesCounter == 0) {
-            JOptionPane.showMessageDialog(null, "YOU LOSE!");
-            newGame();
+            gameOverScreen();
         }
     }
 }
