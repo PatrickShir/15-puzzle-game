@@ -17,5 +17,6 @@ public class Tile extends JButton {
     public Tile(String text) {
         super(text);
     }
+    
 }
 
